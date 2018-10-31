@@ -1,0 +1,58 @@
+// The document states the system requirements about the Smart Fidge System.
+system requirements sfsreqs for SmartFridgeSystem::SFS [
+	description "These are requirements for SFS."
+	
+	requirement R1: "SFS response time limit" [
+		val MaximumLatency = 20 ms
+		description this " shall within " MaximumLatency
+		rationale "This response time is necessary to maintain stable control behavior."
+		category Quality.Latency
+		see goal SFSgoals.g1
+	]
+	
+	requirement R2: "SFS inlet voltage" for power [
+		val volts = 110.0 V
+		compute actualVolt: Physical::Voltage_Type
+		value predicate volts == actualVolt
+		description this " shall be " volts
+		see goal SFSgoals.g2
+	]
+	
+	requirement R3: "SFS synchronization time limit" [
+		val MaximumLatency = 20 ms
+		description this " shall within " MaximumLatency
+		rationale "This time limit is necessary to avoid erratic operation order."
+		category Quality.Latency
+		see goal SFSgoals.g3
+	]
+	
+	requirement R4: "SFS connection" [
+		description "The Raspberry PI and the Android app shall connect to the same web server."
+		rationale "This is necessary for the system to synchronize user operations."
+		see goal SFSgoals.g3
+	]
+	
+	requirement R5: "Internet access" for rpi [
+		description "The Raspberry PI shall get the access to the Internet."
+		rationale "This is necessary for the system to update the products information."
+		see goal SFSgoals.g4
+	]
+	
+	requirement R6: "Online status" for server [
+		description "The server shall work 24/7."
+		see goal SFSgoals.ng1_2
+	]
+	
+	requirement R7: "Microphone permission" for app [
+		description "The Android app shall be granted microphone permission."
+		rationale "The user can store and delete products via voice detection."
+		see goal SFSgoals.g5
+		see goal SFSgoals.ng2
+	]
+	
+	requirement R8: "Products details" for app [
+		description "The Android app shall display all the products kept in the refrigerator."
+		see goal SFSgoals.ng2
+	]
+	
+]

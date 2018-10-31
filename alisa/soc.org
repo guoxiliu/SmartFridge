@@ -1,0 +1,5 @@
+// This is the information about the organization and stakeholder.
+organization soc 
+stakeholder gxl [
+	full name "Guoxi Liu"
+]
