@@ -1,0 +1,19 @@
+-- This file contains the data types used in the system
+package data_types
+public
+	with data_model;
+	
+	-- picture data type
+	data picture
+		properties
+			data_size => 1500 KByte;
+			data_model::data_representation => array;
+	end picture;
+	
+	-- file data type
+	data file
+		properties
+			data_model::data_representation => String;
+	end file;
+	
+end data_types;

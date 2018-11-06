@@ -1,0 +1,27 @@
+package power
+public
+	with common;
+
+	-- battery device
+	device battery
+		features
+			socket: provides bus access common::power.generic;
+	end battery;
+
+	device implementation battery.impl
+	end battery.impl;
+
+	-- power system
+	system power
+		features
+			line: provides bus access common::power.generic;
+	end power;
+
+	system implementation power.generic
+		subcomponents
+			battery1: device battery.impl;
+		connections
+			pwr: bus access battery1.socket <-> line;
+	end power.generic;
+	
+end power;

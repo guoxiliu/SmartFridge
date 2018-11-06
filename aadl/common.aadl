@@ -1,0 +1,25 @@
+package common
+public
+
+	-- power bus
+	bus power
+	end power;
+	
+	bus implementation power.generic
+	end power.generic;
+	
+	-- master sensor bus
+	bus master_sensor
+	end master_sensor;
+	
+	bus implementation master_sensor.generic
+	end master_sensor.generic;
+	
+	-- system bus
+	bus system_bus
+	end system_bus;
+	
+	bus implementation system_bus.generic
+	end system_bus.generic;
+	
+end common;

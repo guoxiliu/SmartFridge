@@ -1,0 +1,88 @@
+package devices
+public
+	with sensor;
+	with base_types;
+	with data_types;
+	with common;
+	
+	-- camera device (contains the sensor and the handler)
+	device camera_sensor extends sensor::generic_sensor
+		features
+			sensor_data_out: refined to out data port data_types::picture;
+			bus_access: requires bus access common::system_bus;
+	end camera_sensor;
+	
+	device implementation camera_sensor.impl extends sensor::generic_sensor.impl
+	end camera_sensor.impl;
+	
+	system camera_handler extends sensor::generic_sensor_handler
+	end camera_handler;
+	
+	system implementation camera_handler.impl extends sensor::generic_sensor_handler.impl
+	end camera_handler.impl;
+	
+	-- amine (from the decomposition of protein) sensor	
+	device amine_sensor extends sensor::generic_sensor
+		features
+			sensor_data_out: refined to out data port base_types::Float_32;
+			bus_access: requires bus access common::master_sensor.generic;
+	end amine_sensor;
+
+	device implementation amine_sensor.impl extends sensor::generic_sensor.impl
+	end amine_sensor.impl;
+
+	-- ethylene (ripening/rotting) sensor
+	device ethylene_sensor extends sensor::generic_sensor
+		features
+			sensor_data_out: refined to out data port base_types::Float_32;
+			bus_access: requires bus access common::master_sensor.generic;
+	end ethylene_sensor;
+	
+	device implementation ethylene_sensor.impl extends sensor::generic_sensor.impl
+	end ethylene_sensor.impl;
+
+	-- hydrogen sulphide (from the decomposition of protein) sensor
+	device H2S_sensor extends sensor::generic_sensor
+		features
+			sensor_data_out: refined to out data port base_types::Float_32;
+			bus_access: requires bus access common::master_sensor.generic;
+	end H2S_sensor;
+	device implementation H2S_sensor.impl extends sensor::generic_sensor.impl
+	end H2S_sensor.impl;
+	
+	-- carbon dioxide sensor
+	device CO2_sensor extends sensor::generic_sensor
+		features
+			sensor_data_out: refined to out data port base_types::Float_32;
+			bus_access: requires bus access common::master_sensor.generic;
+	end CO2_sensor;
+	
+	device implementation CO2_sensor.impl extends sensor::generic_sensor.impl
+	end CO2_sensor.impl;
+	
+	-- master sensor integrates four gas sensors defined above
+	system master_sensor 
+		features
+			sensor1_data_out: out data port base_types::Float_32;
+			sensor2_data_out: out data port base_types::Float_32;
+			sensor3_data_out: out data port base_types::Float_32;
+			sensor4_data_out: out data port base_types::Float_32;
+			bus_access: requires bus access common::system_bus.generic;
+	end master_sensor;
+	
+	system implementation master_sensor.impl 
+		subcomponents
+			amine_sensor: device amine_sensor.impl;
+			ethylene_sensor: device ethylene_sensor.impl;
+			H2S_sensor: device H2S_sensor.impl;
+			CO2_sensor: device CO2_sensor.impl;
+			this_bus: bus common::master_sensor.generic;
+		connections
+			bus_amine: bus access this_bus <-> amine_sensor.bus_access;
+			bus_ethylene: bus access this_bus <-> ethylene_sensor.bus_access;
+			bus_H2S: bus access this_bus <-> H2S_sensor.bus_access;
+			bus_CO2: bus access this_bus <-> CO2_sensor.bus_access;
+			
+	end master_sensor.impl;
+	
+end devices;

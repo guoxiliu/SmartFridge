@@ -1,0 +1,30 @@
+package smartfridge
+public
+	with common; 
+	with devices;
+	with base_types;
+	with data_types;
+	
+	-- smart refrigerator system
+	system sfs
+		features
+			camera_data_out: out data port data_types::picture;
+			sensor1_data_out: out data port base_types::Float_32;
+			sensor2_data_out: out data port base_types::Float_32;
+			sensor3_data_out: out data port base_types::Float_32;
+			sensor4_data_out: out data port base_types::Float_32;
+	end sfs;
+	
+	system implementation sfs.impl
+		subcomponents
+			camera_sensor: device devices::camera_sensor.impl;
+			camera_handler: system devices::camera_handler.impl;
+			master_sensor: system devices::master_sensor.impl;
+			this_bus: bus common::system_bus.generic;
+			
+		connections
+			bus_camera: bus access this_bus <-> camera_sensor.bus_access;
+			bus_master: bus access this_bus <-> master_sensor.bus_access;
+	end sfs.impl;
+	
+end smartfridge;
