@@ -10,6 +10,27 @@ public
 		features
 			sensor_data_out: refined to out data port data_types::picture;
 			bus_access: requires bus access common::system_bus;
+			
+		annex EMV2 {**
+			use types error_library;
+			
+			error propagations
+				sensor_data_out: out propagation {InvalidValue};
+			flows
+				ef0: error source sensor_data_out {InvalidValue};
+			end propagations;
+			
+			properties
+				emv2::hazards => 
+				([
+					failure => "InvalidValue";
+					description => "Invalid data from camera sensor";
+					comment => "Would impact the recognition of product if camera is not working properly";
+				])
+			applies to sensor_data_out.InvalidValue;
+			
+		**};
+		
 	end camera_sensor;
 	
 	device implementation camera_sensor.impl extends sensor::generic_sensor.impl
@@ -68,6 +89,37 @@ public
 			sensor3_data_out: out data port base_types::Float_32;
 			sensor4_data_out: out data port base_types::Float_32;
 			bus_access: requires bus access common::system_bus.generic;
+		flows
+			sensor1_source: flow source sensor1_data_out;
+			sensor2_source: flow source sensor2_data_out;
+			sensor3_source: flow source sensor3_data_out;
+			sensor4_source: flow source sensor4_data_out;
+			
+		annex EMV2 {**
+			use types error_library;
+			use behavior error_library::stateMachine;
+			
+			error propagations
+				sensor1_data_out: out propagation {NoValue};
+				sensor2_data_out: out propagation {NoValue};
+				sensor3_data_out: out propagation {NoValue};
+				sensor4_data_out: out propagation {NoValue};
+			flows
+				ef0: error source sensor1_data_out {NoValue};
+				ef1: error source sensor2_data_out {NoValue};
+				ef2: error source sensor3_data_out {NoValue};
+				ef3: error source sensor4_data_out {NoValue};
+			end propagations;
+			properties
+				emv2::hazards =>
+				([
+					failure => "NoValue";
+					description => "No data from sensor";
+				])
+			applies to sensor1_data_out.NoValue, sensor2_data_out.NoValue,
+					sensor3_data_out.NoValue, sensor4_data_out.NoValue;
+		**};
+		
 	end master_sensor;
 	
 	system implementation master_sensor.impl 

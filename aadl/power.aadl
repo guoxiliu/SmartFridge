@@ -6,6 +6,51 @@ public
 	device battery
 		features
 			socket: provides bus access common::power.generic;
+			
+		annex EMV2 {**
+			use types error_library;
+			use behavior error_library::stateMachine;
+			
+			error propagations
+				socket: out propagation {NoPower};
+			flows
+				f1: error source socket {NoPower};
+			end propagations;
+			component error behavior
+			events
+				Depleted: error event;
+				Explode: error event;
+			transitions
+				Operational -[Depleted]-> Failed;
+				Operational -[Explode]-> Failed;
+			propagations
+				p1: Failed -[]-> socket {NoPower};
+				normal: Operational -[]-> socket {NoError};
+			end component;
+			properties
+				EMV2::hazards =>
+				([
+					failure => "NoPower";
+					description => "Loss of electrical power to the system";
+					comment => "Major hazard if power is lost";
+				])
+				applies to socket.NoPower;
+				EMV2::hazards =>
+				([
+					failure => "Explode";
+					description => "Battery explode";
+					comment => "Have a physical impact on the surrounding components";
+				])
+				applies to Explode;
+				EMV2::hazards =>
+				([
+					failure => "Depleted";
+					description => "Battery depleted";
+					comment => "Can be an issue if the battery is failing";
+				])
+				applies to Depleted;
+		**};
+		
 	end battery;
 
 	device implementation battery.impl
@@ -17,11 +62,11 @@ public
 			line: provides bus access common::power.generic;
 	end power;
 
-	system implementation power.generic
+	system implementation power.impl
 		subcomponents
-			battery1: device battery.impl;
+			battery: device battery.impl;
 		connections
-			pwr: bus access battery1.socket <-> line;
-	end power.generic;
+			pwr: bus access battery.socket <-> line;
+	end power.impl;
 	
 end power;

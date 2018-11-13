@@ -2,6 +2,7 @@ package smartfridge
 public
 	with common; 
 	with devices;
+	with power;
 	with base_types;
 	with data_types;
 	
@@ -17,6 +18,7 @@ public
 	
 	system implementation sfs.impl
 		subcomponents
+			power: system power::power.impl;
 			camera_sensor: device devices::camera_sensor.impl;
 			camera_handler: system devices::camera_handler.impl;
 			master_sensor: system devices::master_sensor.impl;
@@ -25,6 +27,18 @@ public
 		connections
 			bus_camera: bus access this_bus <-> camera_sensor.bus_access;
 			bus_master: bus access this_bus <-> master_sensor.bus_access;
+			
+		annex EMV2 {**
+			use types error_library;
+			use behavior error_library::stateMachine;
+			
+			composite error behavior
+			states
+				[master_sensor.Failed and camera_handler.Failed]-> Failed;
+				[master_sensor.Operational]-> Operational;
+			end composite;
+		**};
+			
 	end sfs.impl;
 	
 end smartfridge;

@@ -23,13 +23,6 @@ public
 			Operational: initial state;
 			Failed: state;
 		end behavior;
-		
-		error behavior levels
-		states
-			steady: initial state;
-			accelerating: state;
-			braking: state;
-		end behavior;
 	**};
 	
 end error_library;

@@ -18,14 +18,15 @@ public
 			error propagations
 				sensor_data_out: out propagation {NoValue};
 			flows
-				ef0: error source sensor_data_out{NoValue};
+				ef0: error source sensor_data_out {NoValue};
 			end propagations;
 			properties
 				emv2::hazards => 
-				([failure => "Novalue";
+				([
+					failure => "NoValue";
 					description => "No data from sensor";
 				])
-			applies to sensor_data_out.novalue;
+			applies to sensor_data_out.NoValue;
 		**};
 		
 	end generic_sensor;
@@ -55,10 +56,10 @@ public
 				sensor_data_in: in propagation {Novalue, BadValue, LateValue};
 				sensor_data_out: out propagation {Novalue, BadValue, LateValue};
 			flows
-				ef0: error source logger_out{BadValue, LateValue};
-				ef1: error source sensor_data_out{LateValue};
-				ef2: error path sensor_data_in{Novalue} -> sensor_data_out{Novalue};
-				ef3: error path sensor_data_in{BadValue, LateValue} -> sensor_data_out{BadValue};
+				ef0: error source logger_out {BadValue, LateValue};
+				ef1: error source sensor_data_out {LateValue};
+				ef2: error path sensor_data_in {Novalue} -> sensor_data_out {Novalue};
+				ef3: error path sensor_data_in {BadValue, LateValue} -> sensor_data_out {BadValue};
 			end propagations;
 		**};
 		
