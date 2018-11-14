@@ -1,6 +1,7 @@
 package power
 public
 	with common;
+	with EMV2;
 
 	-- battery device
 	device battery
@@ -60,6 +61,7 @@ public
 	system power
 		features
 			line: provides bus access common::power.generic;
+			bus_access: requires bus access common::system_bus;
 	end power;
 
 	system implementation power.impl

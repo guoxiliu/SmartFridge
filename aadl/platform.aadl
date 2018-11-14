@@ -1,0 +1,19 @@
+package platform
+public
+	with common;
+	
+	processor main_processor
+		features
+			bus_access: requires bus access common::system_bus.generic;
+	end main_processor;
+	
+	processor implementation main_processor.impl
+		subcomponents
+			this_ram: memory ram;
+	end main_processor.impl;
+	
+	memory ram
+	end ram;
+
+	
+end platform;

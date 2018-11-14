@@ -16,4 +16,10 @@ public
 			data_model::data_representation => String;
 	end file;
 	
+	-- content data type
+	data content
+		properties
+			data_model::data_representation => array;
+	end content;
+	
 end data_types;
