@@ -18,7 +18,7 @@ public
 			SoftwareFailure: type;
 		end types;
 		
-		error behavior stateMachine
+		error behavior simple
 		states
 			Operational: initial state;
 			Failed: state;

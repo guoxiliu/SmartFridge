@@ -33,7 +33,7 @@ public
 			
 		annex EMV2 {**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 			use types error_library;
-			use behavior error_library::stateMachine;
+			use behavior error_library::simple;
 			
 			composite error behavior
 			states

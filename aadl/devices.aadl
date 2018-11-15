@@ -111,11 +111,28 @@ public
 			
 		annex EMV2{**
 			use types error_library;
-			use behavior error_library::stateMachine;
+			use behavior error_library::simple;
+			
+			component error behavior
+			events
+				ControllerFailure: error event;
+			transitions
+				Operational -[ControllerFailure]-> Failed;
+			end component;
+			
+			properties
+				EMV2::hazards =>
+				([
+					failure => "ControllerFailure";
+					description => "The controller does not work properly";
+					comment => "Impact the normal operation of the master sensor";
+				])
+				applies to ControllerFailure;
 		**};
 			
 	end master_sensor.impl;
 	
+	-- process
 	process controller
 		features
 			H2S_in: in data port base_types::Float_32;
@@ -126,6 +143,102 @@ public
 	end controller;
 	
 	process implementation controller.impl
+		subcomponents
+			thread_H2S: thread read_H2S.impl;
+			thread_CO2: thread read_CO2.impl;
+			thread_amine: thread read_amine.impl;
+			thread_ethylene: thread read_ethylene.impl;
+			thread_control: thread control_rule.impl;
+		connections
+			H2S_thread_conn: port H2S_in -> thread_H2S.H2S_in;
+			CO2_thread_conn: port CO2_in -> thread_CO2.CO2_in;
+			amine_thread_conn: port amine_in -> thread_amine.amine_in;
+			ethylene_thread_conn: port ethylene_in -> thread_ethylene.ethylene_in;
+			H2S_control_conn: port H2S_in -> thread_control.H2S_in;
+			CO2_control_conn: port CO2_in -> thread_control.CO2_in;
+			amine_control_conn: port amine_in -> thread_control.amine_in;
+			ethylene_control_conn: port ethylene_in -> thread_control.ethylene_in;
+			content_control_conn: port thread_control.content_out -> content_out;
+			
+		annex EMV2 {**
+			use types error_library;
+			use behavior error_library::simple;
+			
+			error propagations
+				H2S_in: in propagation {NoValue, BadValue};
+				CO2_in: in propagation {NoValue, BadValue};
+				amine_in: in propagation {NoValue, BadValue};
+				ethylene_in: in propagation {NoValue, BadValue};
+				content_out: out propagation {NoValue};
+			flows
+				ef1: error sink H2S_in {NoValue, BadValue};
+				ef2: error sink CO2_in {NoValue, BadValue};
+				ef3: error sink amine_in {NoValue, BadValue};
+				ef4: error sink ethylene_in {NoValue, BadValue};
+				ef5: error source content_out {NoValue};
+			end propagations;
+			
+			component error behavior 
+			events
+				SensorFailure: error event;
+			transitions
+				Operational -[SensorFailure]-> Failed;
+			end component;
+			
+			properties
+				EMV2::hazards => 
+				([
+					failure => "SensorFailure";
+					description => "One or more sensors do not work properly";
+					comment => "Impact the normal operation of the controller";
+				])
+				applies to SensorFailure;
+		**};
 	end controller.impl;
+	
+--	threads
+	thread read_H2S
+		features
+			H2S_in: in data port base_types::Float_32;
+	end read_H2S;
+	
+	thread implementation read_H2S.impl
+	end read_H2S.impl;
+	
+	thread read_CO2
+		features
+			CO2_in: in data port base_types::Float_32;
+	end read_CO2;
+	
+	thread implementation read_CO2.impl
+	end read_CO2.impl;
+	
+	thread read_amine
+		features
+			amine_in: in data port base_types::Float_32;
+	end read_amine;
+	
+	thread implementation read_amine.impl
+	end read_amine.impl;
+	
+	thread read_ethylene
+		features
+			ethylene_in: in data port base_types::Float_32;
+	end read_ethylene;
+	
+	thread implementation read_ethylene.impl
+	end read_ethylene.impl;
+	
+	thread control_rule
+		features
+			H2S_in: in data port base_types::Float_32;
+			CO2_in: in data port base_types::Float_32;
+			amine_in: in data port base_types::Float_32;
+			ethylene_in: in data port base_types::Float_32;
+			content_out: out data port data_types::content;
+	end control_rule;
+	
+	thread implementation control_rule.impl
+	end control_rule.impl;
 	
 end devices;

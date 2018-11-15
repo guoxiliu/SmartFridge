@@ -21,7 +21,7 @@ public
 				ef0: error source sensor_data_out {NoValue};
 			end propagations;
 			properties
-				emv2::hazards => 
+				EMV2::hazards => 
 				([
 					failure => "NoValue";
 					description => "No data from sensor";
@@ -49,7 +49,7 @@ public
 			
 		annex EMV2 {**
 			use types error_library;
-			use behavior error_library::stateMachine;
+			use behavior error_library::simple;
 			
 			error propagations
 				logger_out: out propagation {BadValue, LateValue};

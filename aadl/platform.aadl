@@ -5,6 +5,36 @@ public
 	processor main_processor
 		features
 			bus_access: requires bus access common::system_bus.generic;
+		annex EMV2{**
+			use types error_library;
+			use behavior error_library::simple;
+			
+			error propagations
+				bindings: out propagation {HardwareFailure};
+			flows
+				ef0: error source bindings {HardwareFailure};
+			end propagations;
+			
+			component error behavior
+			events
+				InternalFailure: error event;
+			transitions
+				Operational -[InternalFailure]-> Failed;
+			propagations
+				normal: Operational -[]-> bindings {NoError};
+				pfail: Failed -[]-> bindings {HardwareFailure};
+			end component;
+			
+			properties
+				EMV2::hazards =>
+				([
+					failure => "InternalFailure";
+					description => "Hardware failure (processor, device, etc.)";
+					comment => "Impact all software components associated to the hardware";
+				])
+				applies to InternalFailure;
+			
+		**};
 	end main_processor;
 	
 	processor implementation main_processor.impl

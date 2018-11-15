@@ -10,13 +10,14 @@ public
 			
 		annex EMV2 {**
 			use types error_library;
-			use behavior error_library::stateMachine;
+			use behavior error_library::simple;
 			
 			error propagations
 				socket: out propagation {NoPower};
 			flows
 				f1: error source socket {NoPower};
 			end propagations;
+			
 			component error behavior
 			events
 				Depleted: error event;
@@ -28,6 +29,7 @@ public
 				p1: Failed -[]-> socket {NoPower};
 				normal: Operational -[]-> socket {NoError};
 			end component;
+			
 			properties
 				EMV2::hazards =>
 				([
